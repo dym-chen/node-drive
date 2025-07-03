@@ -1,0 +1,28 @@
+
+Simple file operations (read, write, copy files)
+Basic HTTP server with Express
+Understanding async/await and Promises
+
+Phase 2: Mini Storage API (1-2 weeks)
+
+Single-user file upload/download API
+Basic folder creation
+File listing endpoints
+
+Phase 3: Add CLI (1 week)
+
+Simple CLI that talks to your API
+Upload and download commands only
+
+Phase 4: Expand Features
+
+Add authentication
+Multi-user support
+More CLI commands
+
+Alternative Learning Projects (if this feels too big):
+
+Todo API - Simpler but covers REST, databases, auth
+File organizer script - Good for learning file system operations
+Simple chat app - Great for real-time features
+Weather CLI - API consumption and CLI basics
