@@ -1,12 +1,13 @@
 {
   "dependencies": {
+    "better-sqlite3": "^12.2.0",
     "express": "^5.1.0"
   },
   "name": "drive",
   "description": "",
   "version": "1.0.0",
   "main": "app.js",
-  "devDependencies": {},
+  "type": "module",
   "scripts": {
     "start": "nodemon --env-file=.env app.js"
   },
