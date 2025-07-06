@@ -10,9 +10,9 @@ app.get('/', (req, res) => {
 
 app.post('/', (req, res) => {
     res.send('post request received');
-    
+
 });
 
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+    console.log(`Server is running on http://localhost:${port}`);
 });
