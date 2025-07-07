@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { program } from 'commander';
-import { test } from './commands/files.js';
+import { scan, push, pull, del } from './commands/files.js';
 
 // have to add authorization after
 
@@ -10,6 +10,5 @@ program.
     .name('drive')
     .description('CLI tool for organizing files and directories')
 
-program.addCommand(test);
-
+program.addCommand(push);
 program.parse();
