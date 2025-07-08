@@ -4,7 +4,6 @@ import { program } from 'commander';
 import { scan, push, pull, del } from './commands/files.js';
 
 // have to add authorization after
-
 program.
     version('1.0.0')
     .name('drive')

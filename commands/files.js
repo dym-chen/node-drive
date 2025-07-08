@@ -19,7 +19,7 @@ export const push = new Command('push')
     .option("-f, --force", "overwrite existing file")
     .action(async (path, options) => {
         try {
-            const result = await fetch('http://localhost:8000/upload', {
+            const result = await fetch('http://localhost:8000/files', {
                 method: 'POST',
                 body: JSON.stringify({
                     path,

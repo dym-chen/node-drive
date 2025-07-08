@@ -1,18 +1,50 @@
 import express from 'express';
-import db from './database.js'; 
+import multer from 'multer';
+import path from 'path';
+import db from './database.js';
 
-const app = express();
-const port = process.env.PORT || 3000;
+const fileRouter = express.Router();
+const upload = multer({ storage });
 
-app.get('/', (req, res) => {
+// GET REQUEST HANDLER
+fileRouter.get('/files', (req, res) => {
     res.send('get request received');
 });
 
-app.post('/', (req, res) => {
-    res.send('post request received');
+// POST REQUEST HANDLER
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+        const uniqueName = Date.now() + '-' + file.originalname;
+        cb(null, uniqueName);
+    }
+})
 
+fileRouter.post('/files', upload.single('file'), (req, res) => {
+    const file = req.file;
+    if (!file) {
+        return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    const statement = db.prepare(`
+        INSERT INTO files (original_name, stored_name, size, mime_type)
+        VALUES (?, ?, ?, ?)
+    `);
+
+    statement.run(file.originalname, file.filename, file.size, file.mimetype);
+    
+    res.json({
+        message: 'File uploaded successfully',
+        file: {
+            originalName: file.originalname,
+            storedName: file.filename,
+            size: file.size,
+            mimeType: file.mimetype,
+            uploadedAt: new Date().toISOString()
+        }
+    });
 });
 
-app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
-});
+export default fileRouter;
