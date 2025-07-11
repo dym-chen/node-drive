@@ -1,7 +1,7 @@
 
 // Initialize Express app
 import express from 'express';
-import fileRouter from './utils/endpoints.js';
+import fileRouter from './endpoints/files.js';
 
 const app = express();
 app.use(express.json());

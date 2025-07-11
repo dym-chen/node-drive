@@ -4,14 +4,8 @@ import path from 'path';
 import db from './database.js';
 
 const fileRouter = express.Router();
-const upload = multer({ storage });
 
-// GET REQUEST HANDLER
-fileRouter.get('/files', (req, res) => {
-    res.send('get request received');
-});
-
-// POST REQUEST HANDLER
+// MULTER SETUP
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'uploads/');
@@ -21,7 +15,14 @@ const storage = multer.diskStorage({
         cb(null, uniqueName);
     }
 })
+const upload = multer({ storage });
 
+// GET REQUEST HANDLER
+fileRouter.get('/files', (req, res) => {
+    res.send('get request received');
+});
+
+// POST REQUEST HANDLER
 fileRouter.post('/files', upload.single('file'), (req, res) => {
     const file = req.file;
     if (!file) {
