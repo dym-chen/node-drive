@@ -24,10 +24,15 @@ fileRouter.get('/files', (req, res) => {
 
 // POST REQUEST HANDLER
 fileRouter.post('/files', upload.single('file'), (req, res) => {
+
     const file = req.file;
     if (!file) {
         return res.status(400).json({ error: 'No file uploaded' });
     }
+
+    // retrieve other data from the request
+    const tags = req.body.tags ? JSON.parse(req.body.tags) : [];
+    const force = req.body.force === 'true';
 
     const statement = db.prepare(`
         INSERT INTO files (original_name, stored_name, size, mime_type)

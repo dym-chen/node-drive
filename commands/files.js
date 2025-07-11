@@ -1,4 +1,7 @@
 import { Command } from 'commander';
+import FormData from 'form-data';
+import fetch from 'node-fetch';
+import fs from 'fs';
 
 // scan -> output all meta data for files
 // push -> upload files to the server
@@ -19,16 +22,15 @@ export const push = new Command('push')
     .option("-f, --force", "overwrite existing file")
     .action(async (path, options) => {
         try {
+            const form = new FormData();
+            form.append('file', fs.createReadStream(path));
+            form.append('tags', JSON.stringify(options.tags || []));
+            form.append('force', options.force ? 'true' : 'false');
+
             const result = await fetch('http://localhost:8000/files', {
                 method: 'POST',
-                body: JSON.stringify({
-                    path,
-                    tags: options.tags || [],
-                    force: options.force || false
-                }),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                body: form,
+                headers: form.getHeaders()
             });
 
             if (!result.ok) {
