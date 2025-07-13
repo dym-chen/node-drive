@@ -3,17 +3,9 @@ import FormData from 'form-data';
 import fetch from 'node-fetch';
 import fs from 'fs';
 
-// scan -> output all meta data for files
 // push -> upload files to the server
 // pull -> download files from the server
 // delete -> delete files and directories
-
-export const scan = new Command('scan')
-    .description('upload files to the server')
-    .option("-n, --name <type>", "Add you name")
-    .action((options) => {
-        console.log(`Hello, ${options.name || 'World'}!`);
-    });
 
 export const push = new Command('push')
     .description('upload files to the server')
@@ -45,7 +37,7 @@ export const push = new Command('push')
     });
 
 export const pull = new Command('pull')
-    .description('upload files to the server')
+    .description('pull down files from the server')
     .option("-n, --name <type>", "Add you name")
     .action((options) => {
         console.log(`Hello, ${options.name || 'World'}!`);

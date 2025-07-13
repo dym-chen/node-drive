@@ -2,6 +2,7 @@
 
 import { program } from 'commander';
 import { scan, push, pull, del } from './commands/files.js';
+import { list } from './commands/utils.js';
 
 // have to add authorization after
 program.
@@ -10,4 +11,5 @@ program.
     .description('CLI tool for organizing files and directories')
 
 program.addCommand(push);
+program.addCommand(list);
 program.parse();

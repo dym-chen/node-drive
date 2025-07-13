@@ -19,7 +19,12 @@ const upload = multer({ storage });
 
 // GET REQUEST HANDLER
 fileRouter.get('/files', (req, res) => {
-    res.send('get request received');
+    const body = req.body;
+    
+    const statement = db.prepare('SELECT * FROM files');
+
+    const files = statement.all();
+    res.json(files);
 });
 
 // POST REQUEST HANDLER
