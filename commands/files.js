@@ -29,7 +29,8 @@ export const push = new Command('push')
                 throw new Error(`Failed to upload file: ${result.statusText}`);
             } else {
                 const data = await result.json();
-                console.log('File uploaded successfully:', data);
+                console.log('✅ File uploaded successfully!\n');
+                console.table(data);
             }
         } catch (error) {
             console.error('Error uploading file:', error);
@@ -37,15 +38,38 @@ export const push = new Command('push')
     });
 
 export const pull = new Command('pull')
-    .description('pull down files from the server')
-    .option("-n, --name <type>", "Add you name")
-    .action((options) => {
-        console.log(`Hello, ${options.name || 'World'}!`);
+    .description('download files from the server')
+    .option("-i, --id <id>", "Download file by ID")
+    .option("-n, --name <name>", "Download file by name")
+    .action(async (options) => {
+
+        if (!options.id && !options.name) {
+            console.error('You must specify either an ID or a name to download a file.');
+            return;
+        }
+        const query = options.id ? `?id=${options.id}` : `?name=${options.name}`;
+
+        try {
+            const response = await fetch(`http://localhost:8000/files${query}`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to download file: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            console.log(data);
+        } catch (error) {
+            console.error('Error downloading file:', error.message);
+        }
     });
 
 export const del = new Command('del')
-    .description('upload files to the server')
-    .option("-n, --name <type>", "Add you name")
+    .description('delete files from the server')
+    .option("-i, --id <id>", "Delete file by ID")
+    .option("-n, --name <name>", "Delete file by name")
     .action((options) => {
         console.log(`Hello, ${options.name || 'World'}!`);
     });

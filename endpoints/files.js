@@ -19,11 +19,20 @@ const upload = multer({ storage });
 
 // GET REQUEST HANDLER
 fileRouter.get('/files', (req, res) => {
-    const body = req.body;
-    
-    const statement = db.prepare('SELECT * FROM files');
+    const {name, id} = req.query;
+    let sql = 'SELECT * FROM files';
+    const params = [];
 
-    const files = statement.all();
+    if (name) {
+        sql += ' WHERE name = ?';
+        params.push(name);
+    } else if (id) {
+        sql += ' WHERE id = ?';
+        params.push(id);
+    }
+    sql += ' ORDER BY uploaded_at DESC';
+    const statement = db.prepare(sql);
+    const files = statement.all(...params);
     res.json(files);
 });
 
