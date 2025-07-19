@@ -10,7 +10,8 @@ program.
     .name('drive')
     .description('CLI tool for organizing files and directories')
 
-program.addCommand(push); 
+program.addCommand(push);
 program.addCommand(pull);
 program.addCommand(list);
+program.addCommand(del);
 program.parse();

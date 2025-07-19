@@ -98,4 +98,47 @@ fileRouter.post('/files', upload.single('file'), (req, res) => {
     });
 });
 
+fileRouter.delete('/files', (req, res) => {
+    const { id, name } = req.query;
+
+    if (!id && !name) {
+        return res.status(400).json({ error: 'You must specify either an id or a name.' });
+    }
+
+    // Find the file record
+    let sql = 'SELECT * FROM files WHERE';
+    const conditions = [];
+    const params = [];
+    if (id) {
+        conditions.push('id = ?');
+        params.push(id);
+    }
+    if (name) {
+        conditions.push('name = ?');
+        params.push(name);
+    }
+    sql += ' ' + conditions.join(' AND ');
+
+    const file = db.prepare(sql).get(...params);
+    if (!file) {
+        return res.status(404).json({ error: 'File not found.' });
+    }
+
+    // Delete the file from disk
+    const filePath = path.join('uploads', file.stored_name);
+    if (fs.existsSync(filePath)) {
+        try {
+            fs.unlinkSync(filePath);
+        } catch (err) {
+            return res.status(500).json({ error: 'Failed to delete file from disk.' });
+        }
+    }
+
+    // Delete the record from the database
+    const delSql = `DELETE FROM files WHERE ${conditions.join(' AND ')}`;
+    db.prepare(delSql).run(...params);
+
+    res.json({ message: 'File deleted successfully.' });
+});
+
 export default fileRouter;

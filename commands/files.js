@@ -84,6 +84,26 @@ export const del = new Command('del')
     .description('delete files from the server')
     .option("-i, --id <id>", "Delete file by ID")
     .option("-n, --name <name>", "Delete file by name")
-    .action((options) => {
-        console.log(`Hello, ${options.name || 'World'}!`);
+    .action(async (options) => {
+        if (!options.id && !options.name) {
+            console.error('You must specify either an ID or a name to delete a file.');
+            return;
+        }
+
+        const query = options.id ? `?id=${options.id}` : `?name=${options.name}`;
+
+        try {
+            const response = await fetch(`http://localhost:8000/files${query}`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to delete file: ${response.statusText}`);
+            } else {
+                const data = await response.json();
+                console.log(data.message);
+            }
+        } catch (error) {
+            console.error('Error deleting file:', error.message);
+        }
     });
