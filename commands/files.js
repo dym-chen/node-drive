@@ -2,6 +2,7 @@ import { Command } from 'commander';
 import FormData from 'form-data';
 import fetch from 'node-fetch';
 import fs from 'fs';
+import path from 'path';
 
 // push -> upload files to the server
 // pull -> download files from the server
@@ -51,16 +52,29 @@ export const pull = new Command('pull')
 
         try {
             const response = await fetch(`http://localhost:8000/files${query}`, {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' }
+                method: 'GET'
             });
 
             if (!response.ok) {
                 throw new Error(`Failed to download file: ${response.statusText}`);
             }
 
-            const data = await response.json();
-            console.log(data);
+            // Get filename from Content-Disposition header
+            const disposition = response.headers.get('content-disposition');
+            let filename = 'downloaded_file';
+            if (disposition && disposition.includes('filename=')) {
+                filename = disposition.split('filename=')[1].replace(/"/g, '');
+            }
+
+            // Save file to disk
+            const dest = fs.createWriteStream(path.join(process.cwd(), filename));
+            response.body.pipe(dest);
+            response.body.on('end', () => {
+                console.log(`File downloaded as ${filename}`);
+            });
+            response.body.on('error', (err) => {
+                console.error('Error writing file:', err);
+            });
         } catch (error) {
             console.error('Error downloading file:', error.message);
         }
