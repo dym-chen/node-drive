@@ -1,8 +1,6 @@
 
 import { Command } from 'commander';
-import FormData from 'form-data';
 import fetch from 'node-fetch';
-import fs from 'fs';
 
 // share -> share files and directories
 // tree -> output a tree structure of files and directories
