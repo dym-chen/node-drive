@@ -2,7 +2,7 @@
 
 import { program } from 'commander';
 import { push, pull, del } from './commands/files.js';
-import { list } from './commands/utils.js';
+import { list, tree } from './commands/utils.js';
 
 // have to add authorization after
 program.
@@ -13,5 +13,6 @@ program.
 program.addCommand(push);
 program.addCommand(pull);
 program.addCommand(list);
+program.addCommand(tree);
 program.addCommand(del);
 program.parse();
