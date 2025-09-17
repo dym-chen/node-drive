@@ -1,7 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 import path from 'path';
-import db from './database.js';
+import db from '../setup/database.js';
 import fs from 'fs';
 
 const fileRouter = express.Router();
@@ -140,77 +140,3 @@ fileRouter.delete('/files', (req, res) => {
 
     res.json({ message: 'File deleted successfully.' });
 });
-
-// TREE ENDPOINT
-fileRouter.get('/tree', (req, res) => {
-    try {
-        // Get all files from database
-        const sql = 'SELECT * FROM files ORDER BY original_name';
-        const files = db.prepare(sql).all();
-
-        // Build tree structure
-        const tree = buildTree(files);
-        res.json(tree);
-    } catch (err) {
-        console.error('Error building tree:', err);
-        res.status(500).json({ error: 'Failed to build tree structure' });
-    }
-});
-
-function buildTree(files) {
-    const root = { name: 'uploads', children: [] };
-    const pathMap = new Map();
-
-    // Initialize root
-    pathMap.set('', root);
-
-    files.forEach(file => {
-        const pathParts = file.original_name.split('/');
-        let currentPath = '';
-
-        pathParts.forEach((part, index) => {
-            const parentPath = currentPath;
-            currentPath = currentPath ? `${currentPath}/${part}` : part;
-
-            if (!pathMap.has(currentPath)) {
-                const node = {
-                    name: part,
-                    children: [],
-                    isFile: index === pathParts.length - 1,
-                    fileData: index === pathParts.length - 1 ? {
-                        id: file.id,
-                        size: file.size,
-                        mimeType: file.mime_type,
-                        uploadedAt: file.uploaded_at
-                    } : null
-                };
-
-                pathMap.set(currentPath, node);
-
-                // Add to parent
-                if (pathMap.has(parentPath)) {
-                    pathMap.get(parentPath).children.push(node);
-                }
-            }
-        });
-    });
-
-    // Sort children alphabetically
-    function sortChildren(node) {
-        if (node.children) {
-            node.children.sort((a, b) => {
-                // Directories first, then files
-                if (a.isFile !== b.isFile) {
-                    return a.isFile ? 1 : -1;
-                }
-                return a.name.localeCompare(b.name);
-            });
-            node.children.forEach(sortChildren);
-        }
-    }
-
-    sortChildren(root);
-    return root;
-}
-
-export default fileRouter;
